@@ -1,0 +1,47 @@
+
+// Sol 2: BFS
+// TC: O(n)
+// SC: O(n)
+// we need to cast variables to long despite answer's range in signed int
+// is b/c in extreme, there can might more levels but with smaller width,
+// this will exceed for 2*idx and 2*idx+1
+int widthOfBinaryTree(TreeNode* root) {
+    long rst = 1;
+    queue<pair<TreeNode*,  long>> q;
+    q.push({root, 1});
+    while(!q.empty()){
+        int n = q.size();
+        long left = q.front().second;
+        long right = q.back().second;
+        
+        rst = max(rst, right-left+1);
+        
+        for(int i = 0; i < n; i++){
+            long val = q.front().second;
+            TreeNode* cur_node = q.front().first;
+            q.pop();
+            long idx = val - left;
+            if(cur_node->left != nullptr) q.push({cur_node->left, 2*idx});
+            if(cur_node->right != nullptr) q.push({cur_node->right, 2*idx+1});
+        }
+    }
+    return rst;
+    
+}
+
+// Sol 1: DFS
+// TC: O(n)
+// SC: 
+vector<int> largestValues(TreeNode* root) {
+    vector<int> rst;
+    helper(root, 0, rst);
+    return rst;
+}
+
+void helper(TreeNode* root, int row, vector<int>& vec){
+    if(root == nullptr) return;
+    if(row+1 > vec.size()) vec.push_back(root->val);
+    if(root->val > vec[row]) vec[row] = root->val;
+    helper(root->left, row+1, vec);
+    helper(root->right, row+1, vec);
+}
